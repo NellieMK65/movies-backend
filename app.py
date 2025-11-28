@@ -17,14 +17,17 @@ def create_genre():
 
 # http://localhost:8000/genre -> GET -> retrieve all genres
 @app.get("/genre")
-def get_genre():
+def get_genres():
     # use sql alchemy to retrieve all genres
     return []
 
 # http://localhost:8000/genre/7 -> GET -> get a single genre
 @app.get("/genre/{genre_id}")
 def get_genre(genre_id):
-    return {}
+    # retrieve a single genre using sqlalchemy
+    # genre = db.query(Genre).filter(id == genre_id).first()
+    # SELECT * FROM genre WHERE id = 7 LIMIT 1
+    return {"id": genre_id}
 
 # http://localhost:8000/genre/7 -> PACTH -> update a single genre
 @app.patch("/genre/{genre_id}")
