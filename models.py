@@ -1,8 +1,23 @@
 #1 import the necessary packages
-# from sqlalchemy.ext.declarative import declarative_base
 from datetime import datetime
-from sqlalchemy import Column, Integer, Text, DateTime
-from sqlalchemy.orm import declarative_base # latest version
+from sqlalchemy import Column, Integer, Text, DateTime, create_engine
+from sqlalchemy.orm import declarative_base, sessionmaker # latest version
+
+# create an engine which essentially is responsible for converting sql to python and vice versa
+engine = create_engine("sqlite:///movies.db", echo=True)
+
+# create session which allows us to interface with the db
+Session = sessionmaker(bind=engine)
+
+# for fastapi, we need to create a method that returns the session
+def get_db():
+    session = Session()
+    try:
+        # retuns the session which we can use to interact with the db via fastapi methods
+        yield session
+    finally:
+        # this closes the connection to the db
+        session.close()
 
 # 2. Setup the base class from which all our models will inherit from
 Base = declarative_base()
