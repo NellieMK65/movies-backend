@@ -1,6 +1,6 @@
 #1 import the necessary packages
 from datetime import datetime
-from sqlalchemy import Column, Integer, Text, DateTime, create_engine
+from sqlalchemy import Column, Integer, Text, DateTime, ForeignKey, create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker # latest version
 
 # create an engine which essentially is responsible for converting sql to python and vice versa
@@ -40,6 +40,8 @@ class Catalogue(Base):
     id = Column(Integer(), primary_key=True)
     name = Column(Text(), nullable=False)
     year = Column(Integer(), nullable=False)
+    description = Column(Text(), nullable=False)
+    genre_id = Column(Integer())
     like_count = Column(Integer(), nullable=False, default=0)
     duration = Column(Integer(), nullable=False) # we will store duration in minutes
     created_at = Column(DateTime, default = datetime.now())

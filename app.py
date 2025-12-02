@@ -9,7 +9,16 @@ from models import get_db, Genre, Catalogue
 app = FastAPI()
 
 # allow network request from all servers
-app.add_middleware(CORSMiddleware, allow_origins = ["*"])
+"""
+-> by default the server only allows requests comming from the same port but
+-> more often the frontend runs on a different port hence we need to allow this by setting
+-> allow_origins = ["*"]
+-> likewise, we also need to allow all the http methods by setting
+-> allow_methods = ["*"]
+
+-> This is not the best thing to do for security
+"""
+app.add_middleware(CORSMiddleware, allow_origins = ["*"], allow_methods=["*"])
 
 # create routes to access resources
 @app.get("/")
@@ -63,3 +72,35 @@ def update_genre(genre_id):
 def delete_genre(genre_id):
     return {}
 
+class CatalogueSchema(BaseModel):
+    name: str
+    description: str
+    year: int
+    duration: int
+    genre_id: int
+
+
+# http://localhost:8000/catalogue -> POST -> to create catalogue
+@app.post("/catalogue")
+def create_catalogue(catologue: CatalogueSchema, session = Depends(get_db)):
+    # 1. create instance of the model class imported from models.py
+    new_catalogue = Catalogue(
+        name=catologue.name,
+        description=catologue.description,
+        year=catologue.year,
+        duration=catologue.duration,
+        genre_id=catologue.genre_id
+    )
+    # 2. add this to session
+    session.add(new_catalogue)
+    # 3. save it by commiting the transaction
+    session.commit()
+
+    return {"message": "Movie added in successfully"}
+
+# http://localhost:8000/catalogue -> GET -> retrieve all catalogues
+@app.get("/catalogue")
+def get_catalogues(session = Depends(get_db)):
+    # use sql alchemy to retrieve all catalogues
+    catalogues = session.query(Catalogue).all()
+    return catalogues
